@@ -1,0 +1,10 @@
+﻿{
+  "name": "CoolerEclipse",
+  "version_number": "1.0.1",
+  "website_url": "",
+  "description": "Swaps vanilla stage weather with eclipse weather",
+  "dependencies": [
+    "bbepis-BepInExPack-5.4.2111",
+    "RiskofThunder-HookGenPatcher-1.2.3"
+  ]
+}
