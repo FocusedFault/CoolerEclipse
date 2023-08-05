@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace CoolerEclipse
 {
-  [BepInPlugin("com.Nuxlar.CoolerEclipse", "CoolerEclipse", "1.0.2")]
+  [BepInPlugin("com.Nuxlar.CoolerEclipse", "CoolerEclipse", "1.0.3")]
 
   public class CoolerEclipse : BaseUnityPlugin
   {
@@ -18,17 +18,20 @@ namespace CoolerEclipse
     private static ConfigFile CEConfig { get; set; }
 
     private string[] whitelistedMaps = new string[] {
+      "snowyforest",
       "blackbeach2",
       "golemplains",
       "golemplains2",
       "goolake",
+      "foggyswamp",
       "ancientloft",
       "frozenwall",
       "wispgraveyard",
       "sulfurpools",
       "FBLScene",
       "shipgraveyard",
-      "rootjungle"
+      "rootjungle",
+      "skymeadow"
 };
 
     public void Awake()
@@ -58,21 +61,54 @@ namespace CoolerEclipse
             gameObjects.Where((obj) => obj.name == "Sun").First<GameObject>().SetActive(false);
         }
         else
-          GameObject.Find("Directional Light (SUN)").gameObject.SetActive(false);
-
-        if (sceneName == "rootjungle")
-          GameObject.Find("HOLDER: Weather Set 1").gameObject.SetActive(false);
+        {
+          GameObject sun = GameObject.Find("Directional Light (SUN)");
+          GameObject amb = GameObject.Find("PP + Amb");
+          GameObject probe = GameObject.Find("Reflection Probe");
+          if (sun)
+            sun.SetActive(false);
+          if (amb)
+            amb.SetActive(false);
+          if (probe)
+            probe.SetActive(false);
+        }
 
         GameObject newWeather = Instantiate(eclipseWeather, new Vector3(0, 0, 0), Quaternion.identity);
         newWeather.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
 
+        // Stage specific tweaks
+        if (sceneName == "snowyforest")
+        {
+          newWeather.transform.GetChild(0).gameObject.SetActive(false);
+          newWeather.transform.GetChild(1).GetComponent<Light>().intensity = 0.25f;
+        }
+
+        if (sceneName == "foggyswamp")
+          newWeather.transform.GetChild(1).GetComponent<Light>().intensity = 0.75f;
+
         if (sceneName == "FBLScene" || sceneName == "shipgraveyard")
           newWeather.transform.GetChild(1).GetComponent<Light>().intensity = 1;
+
         if (sceneName == "frozenwall")
         {
           newWeather.transform.GetChild(0).gameObject.SetActive(false);
           newWeather.transform.GetChild(1).gameObject.SetActive(false);
         }
+
+        if (sceneName == "rootjungle")
+        {
+          newWeather.transform.GetChild(0).gameObject.SetActive(false);
+          GameObject groveWeather = GameObject.Find("HOLDER: Weather Set 1");
+          if (groveWeather)
+            groveWeather.gameObject.SetActive(false);
+        }
+
+        if (sceneName == "skymeadow")
+        {
+          newWeather.transform.GetChild(3).gameObject.SetActive(false);
+          newWeather.transform.GetChild(1).GetComponent<Light>().intensity = 0;
+        }
+
         NetworkServer.Spawn(newWeather);
       }
       orig(self);

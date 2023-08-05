@@ -2,9 +2,14 @@
 
 Changes the skybox and weather on specific stages when playing Eclipse. There's a config for making the change a 50% chance instead of guaranteed.
 
-Affected Maps: Distant Roost 2, Titanic Plains 1 & 2, Aphelian Sanctuary, Abandoned Acqueduct, Scorched Acres, Rallypoint Delta, Sulfur Pools, Fogbound Lagoon (if installed), Sundered Grove, Siren's Call
+Unaffected maps: Roost 1, Abyssal Depths, any modded map except Fogbound
 
 ## Changelog
+
+**1.0.3**
+
+- Makes Sundered Grove less bright in some places
+- Adds more maps: siphoned, wetland, sky meadow
 
 **1.0.2**
 
