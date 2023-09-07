@@ -6,6 +6,11 @@ Unaffected maps: Roost 1, Abyssal Depths, any modded map except Fogbound
 
 ## Changelog
 
+**1.1.0**
+
+- Several bug fixes
+- Should look way better now
+
 **1.0.3**
 
 - Makes Sundered Grove less bright in some places

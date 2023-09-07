@@ -9,16 +9,20 @@ using System.Linq;
 
 namespace CoolerEclipse
 {
-  [BepInPlugin("com.Nuxlar.CoolerEclipse", "CoolerEclipse", "1.0.3")]
+  [BepInPlugin("com.Nuxlar.CoolerEclipse", "CoolerEclipse", "1.1.0")]
 
   public class CoolerEclipse : BaseUnityPlugin
   {
     GameObject eclipseWeather = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/eclipseworld/Weather, Eclipse.prefab").WaitForCompletion();
+    Material opaqueMat = Addressables.LoadAssetAsync<Material>("RoR2/DLC1/voidraid/matVoidRaidPlanetBlueMarbleShell.mat").WaitForCompletion();
+    Material moonMat = Addressables.LoadAssetAsync<Material>("RoR2/Base/skymeadow/matSMSkyboxMoon.mat").WaitForCompletion();
+
     public static ConfigEntry<bool> shouldBeChance;
     private static ConfigFile CEConfig { get; set; }
 
     private string[] whitelistedMaps = new string[] {
       "snowyforest",
+      "blackbeach",
       "blackbeach2",
       "golemplains",
       "golemplains2",
@@ -30,6 +34,7 @@ namespace CoolerEclipse
       "sulfurpools",
       "FBLScene",
       "shipgraveyard",
+      "dampcavesimple",
       "rootjungle",
       "skymeadow"
 };
@@ -71,28 +76,23 @@ namespace CoolerEclipse
             amb.SetActive(false);
           if (probe)
             probe.SetActive(false);
+          GameObject probe2 = GameObject.Find("Reflection Probe");
+          if (probe2)
+            probe.SetActive(false);
         }
 
         GameObject newWeather = Instantiate(eclipseWeather, new Vector3(0, 0, 0), Quaternion.identity);
+        Light moonLight = newWeather.transform.GetChild(1).GetComponent<Light>();
+        moonLight.intensity = 1f;
+        moonLight.shadowStrength = 0.5f;
+        newWeather.transform.GetChild(2).GetComponent<SetAmbientLight>().ApplyLighting();
+        newWeather.transform.GetChild(0).GetComponent<ReflectionProbe>().Reset();
         newWeather.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
 
-        // Stage specific tweaks
         if (sceneName == "snowyforest")
         {
-          newWeather.transform.GetChild(0).gameObject.SetActive(false);
-          newWeather.transform.GetChild(1).GetComponent<Light>().intensity = 0.25f;
-        }
-
-        if (sceneName == "foggyswamp")
-          newWeather.transform.GetChild(1).GetComponent<Light>().intensity = 0.75f;
-
-        if (sceneName == "FBLScene" || sceneName == "shipgraveyard")
-          newWeather.transform.GetChild(1).GetComponent<Light>().intensity = 1;
-
-        if (sceneName == "frozenwall")
-        {
-          newWeather.transform.GetChild(0).gameObject.SetActive(false);
-          newWeather.transform.GetChild(1).gameObject.SetActive(false);
+          moonLight.intensity = 0.25f;
+          moonLight.shadowStrength = 0.1f;
         }
 
         if (sceneName == "rootjungle")
@@ -105,8 +105,12 @@ namespace CoolerEclipse
 
         if (sceneName == "skymeadow")
         {
-          newWeather.transform.GetChild(3).gameObject.SetActive(false);
-          newWeather.transform.GetChild(1).GetComponent<Light>().intensity = 0;
+          GameObject moon = GameObject.Find("ShatteredMoonMesh");
+          if (moon)
+          {
+            GameOb
+          }
+          moon.GetComponent<MeshRenderer>().sharedMaterials = new Material[2] { opaqueMat, moonMat };
         }
 
         NetworkServer.Spawn(newWeather);
