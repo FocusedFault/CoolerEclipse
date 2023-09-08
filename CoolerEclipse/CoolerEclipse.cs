@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Rendering.PostProcessing;
 using System.Linq;
 
 namespace CoolerEclipse
@@ -14,9 +15,6 @@ namespace CoolerEclipse
   public class CoolerEclipse : BaseUnityPlugin
   {
     GameObject eclipseWeather = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/eclipseworld/Weather, Eclipse.prefab").WaitForCompletion();
-    Material opaqueMat = Addressables.LoadAssetAsync<Material>("RoR2/DLC1/voidraid/matVoidRaidPlanetBlueMarbleShell.mat").WaitForCompletion();
-    Material moonMat = Addressables.LoadAssetAsync<Material>("RoR2/Base/skymeadow/matSMSkyboxMoon.mat").WaitForCompletion();
-
     public static ConfigEntry<bool> shouldBeChance;
     private static ConfigFile CEConfig { get; set; }
 
@@ -34,9 +32,9 @@ namespace CoolerEclipse
       "sulfurpools",
       "FBLScene",
       "shipgraveyard",
-      "dampcavesimple",
       "rootjungle",
-      "skymeadow"
+      "skymeadow",
+      "moon2"
 };
 
     public void Awake()
@@ -70,7 +68,7 @@ namespace CoolerEclipse
           GameObject sun = GameObject.Find("Directional Light (SUN)");
           GameObject amb = GameObject.Find("PP + Amb");
           GameObject probe = GameObject.Find("Reflection Probe");
-          if (sun)
+          if (sun && sceneName != "moon2" && sceneName != "skymeadow")
             sun.SetActive(false);
           if (amb)
             amb.SetActive(false);
@@ -83,16 +81,35 @@ namespace CoolerEclipse
 
         GameObject newWeather = Instantiate(eclipseWeather, new Vector3(0, 0, 0), Quaternion.identity);
         Light moonLight = newWeather.transform.GetChild(1).GetComponent<Light>();
-        moonLight.intensity = 1f;
-        moonLight.shadowStrength = 0.5f;
-        newWeather.transform.GetChild(2).GetComponent<SetAmbientLight>().ApplyLighting();
+        moonLight.shadowStrength = 0.25f;
+        SetAmbientLight ambLight = newWeather.transform.GetChild(2).GetComponent<SetAmbientLight>();
+        ambLight.ambientIntensity = 0.75f;
+        ambLight.ApplyLighting();
+        // 0.75 aphelian, aqueduct, wetland, pools, acres, grove, sirens, skymeadow
+        newWeather.transform.GetChild(2).GetComponent<PostProcessVolume>().priority = 9999f;
         newWeather.transform.GetChild(0).GetComponent<ReflectionProbe>().Reset();
         newWeather.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
 
+        if (sceneName.Contains("blackbeach") || sceneName.Contains("golemplains"))
+        {
+          ambLight.ambientIntensity = 1f;
+          ambLight.ApplyLighting();
+        }
+
         if (sceneName == "snowyforest")
         {
+          ambLight.ambientIntensity = 0.5f;
+          ambLight.ApplyLighting();
+          GameObject trees = GameObject.Find("Treecards");
+          if (trees)
+            trees.SetActive(false);
+        }
+
+        if (sceneName == "frozenwall")
+        {
           moonLight.intensity = 0.25f;
-          moonLight.shadowStrength = 0.1f;
+          ambLight.ambientIntensity = 0.25f;
+          ambLight.ApplyLighting();
         }
 
         if (sceneName == "rootjungle")
@@ -103,14 +120,26 @@ namespace CoolerEclipse
             groveWeather.gameObject.SetActive(false);
         }
 
-        if (sceneName == "skymeadow")
+        if (sceneName.Contains("skymeadow"))
         {
+          newWeather.transform.GetChild(1).gameObject.SetActive(false);
+          GameObject sun = GameObject.Find("Directional Light (SUN)");
+          sun.GetComponent<Light>().color = moonLight.color;
+          ambLight.ambientIntensity = 1f;
+          ambLight.ApplyLighting();
           GameObject moon = GameObject.Find("ShatteredMoonMesh");
           if (moon)
-          {
-            GameOb
-          }
-          moon.GetComponent<MeshRenderer>().sharedMaterials = new Material[2] { opaqueMat, moonMat };
+            moon.GetComponent<MeshRenderer>().sortingOrder = -1;
+        }
+
+        if (sceneName == "moon2")
+        {
+          newWeather.transform.GetChild(1).gameObject.SetActive(false);
+          GameObject sun = GameObject.Find("Directional Light (SUN)");
+          sun.GetComponent<Light>().color = moonLight.color;
+          GameObject planet = GameObject.Find("Moon");
+          if (planet)
+            planet.GetComponent<MeshRenderer>().sortingOrder = -1;
         }
 
         NetworkServer.Spawn(newWeather);

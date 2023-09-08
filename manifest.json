@@ -2,7 +2,7 @@
   "name": "CoolerEclipse",
   "version_number": "1.1.0",
   "website_url": "",
-  "description": "Changes skybox on specific stages when playing Eclipse.",
+  "description": "Changes stage skybox when playing Eclipse",
   "dependencies": [
     "bbepis-BepInExPack-5.4.2111",
     "RiskofThunder-HookGenPatcher-1.2.3"

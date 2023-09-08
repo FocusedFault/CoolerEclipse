@@ -2,7 +2,7 @@
 
 Changes the skybox and weather on specific stages when playing Eclipse. There's a config for making the change a 50% chance instead of guaranteed.
 
-Unaffected maps: Roost 1, Abyssal Depths, any modded map except Fogbound
+Unaffected maps: Abyssal Depths, any modded map except Fogbound, special stages (locus, moment whole, etc...)
 
 ## Changelog
 
@@ -10,6 +10,7 @@ Unaffected maps: Roost 1, Abyssal Depths, any modded map except Fogbound
 
 - Several bug fixes
 - Should look way better now
+- Added roost 1 and moon 2
 
 **1.0.3**
 
