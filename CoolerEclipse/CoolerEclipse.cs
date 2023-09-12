@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace CoolerEclipse
 {
-  [BepInPlugin("com.Nuxlar.CoolerEclipse", "CoolerEclipse", "1.1.0")]
+  [BepInPlugin("com.Nuxlar.CoolerEclipse", "CoolerEclipse", "1.1.1")]
 
   public class CoolerEclipse : BaseUnityPlugin
   {
@@ -85,8 +85,8 @@ namespace CoolerEclipse
         SetAmbientLight ambLight = newWeather.transform.GetChild(2).GetComponent<SetAmbientLight>();
         ambLight.ambientIntensity = 0.75f;
         ambLight.ApplyLighting();
-        // 0.75 aphelian, aqueduct, wetland, pools, acres, grove, sirens, skymeadow
-        newWeather.transform.GetChild(2).GetComponent<PostProcessVolume>().priority = 9999f;
+        if (sceneName == "blackbeach" || sceneName == "moon2")
+          newWeather.transform.GetChild(2).GetComponent<PostProcessVolume>().priority = 9999f;
         newWeather.transform.GetChild(0).GetComponent<ReflectionProbe>().Reset();
         newWeather.transform.GetChild(3).GetChild(2).gameObject.SetActive(true);
 
@@ -137,6 +137,8 @@ namespace CoolerEclipse
           newWeather.transform.GetChild(1).gameObject.SetActive(false);
           GameObject sun = GameObject.Find("Directional Light (SUN)");
           sun.GetComponent<Light>().color = moonLight.color;
+          ambLight.ambientIntensity = 0.5f;
+          ambLight.ApplyLighting();
           GameObject planet = GameObject.Find("Moon");
           if (planet)
             planet.GetComponent<MeshRenderer>().sortingOrder = -1;

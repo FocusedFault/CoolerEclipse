@@ -6,7 +6,12 @@ Unaffected maps: Abyssal Depths, any modded map except Fogbound, special stages 
 
 ## Changelog
 
-**1.1.0**
+**1.1.1**
+
+- Fixes BRIGHT moon
+- Minor bug fixes
+
+- **1.1.0**
 
 - Several bug fixes
 - Should look way better now
